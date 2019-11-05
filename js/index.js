@@ -5,6 +5,12 @@ let page = 1;
 document.addEventListener("DOMContentLoaded", () => {
   createForm();
   fetchMonsters();
+
+  let backBtn = document.querySelector("#back")
+  backBtn.addEventListener('click', goBack)
+
+  let forwardBtn = document.querySelector("#forward")
+  forwardBtn.addEventListener('click', goForward)
 })
 
 function createForm(){
@@ -38,9 +44,12 @@ function createForm(){
 }
 
 function fetchMonsters(){
+  let monsterContainer = document.querySelector('#monster-container')
+  monsterContainer.innerHTML =""
+
   let limit = 50; 
   let getParams = `?_limit=${limit}&_page=${page}`
-  page++
+  // page++
 
   fetch(`${MONSTERS_URL}/${getParams}`)
   .then( response => response.json() )
@@ -56,7 +65,7 @@ function renderMonster(monster){
   monsterDiv.dataset.monsterId = monster.id
 
   let monsterName = document.createElement('h2')
-  monsterName.innerText = monster.name
+  monsterName.innerText = `${monster.name} (${monster.id})`
 
   let monsterAge = document.createElement('h4')
   monsterAge.innerText = `Age: ${Math.floor(monster.age)} years ${Math.floor((monster.age % 1)*12)} months`
@@ -92,4 +101,18 @@ function createMonster(){
     .then( wtf => console.log(wtf) )
 
   event.currentTarget.parentElement.reset()
+}
+
+function goBack(){
+  if (page === 1){
+    fetchMonsters()
+  } else {
+    page--
+    fetchMonsters()
+  }
+}
+
+function goForward(){
+  page++
+  fetchMonsters()
 }
